@@ -1,0 +1,94 @@
+[gd_scene load_steps=13 format=2]
+
+[ext_resource path="res://laser/laser_pre.shader" type="Shader" id=1]
+[ext_resource path="res://laser/laser.png" type="Texture" id=2]
+[ext_resource path="res://laser/laser_pre.ogg" type="AudioStream" id=3]
+[ext_resource path="res://laser_particle.png" type="Texture" id=4]
+[ext_resource path="res://laser/laser_post.ogg" type="AudioStream" id=5]
+[ext_resource path="res://laser/laser.ogg" type="AudioStream" id=6]
+[ext_resource path="res://unshaded_additive.tres" type="Material" id=7]
+[ext_resource path="res://laser/laser.gd" type="Script" id=8]
+
+[sub_resource type="ShaderMaterial" id=1]
+shader = ExtResource( 1 )
+shader_param/scale = 1.0
+shader_param/forward_velocity = 48.0
+shader_param/velocity_random = 0.167
+shader_param/rotations_per_second = 0.5
+shader_param/rotation_random = 0.5
+shader_param/rotation_radius = 16.0
+shader_param/radius_random = 0.5
+shader_param/emission_length = 2048.0
+shader_param/intensity = 1.0
+shader_param/color_value = Color( 1, 1, 1, 1 )
+
+[sub_resource type="Curve" id=2]
+_data = [ Vector2( 0, 1 ), 0.0, 0.0, 0, 0, Vector2( 1, 0 ), -2.39428, 0.0, 0, 0 ]
+
+[sub_resource type="CurveTexture" id=3]
+width = 32
+curve = SubResource( 2 )
+
+[sub_resource type="ParticlesMaterial" id=4]
+emission_shape = 2
+emission_box_extents = Vector3( 8, 2048, 1 )
+flag_disable_z = true
+spread = 180.0
+gravity = Vector3( 0, 0, 0 )
+initial_velocity = 55.17
+initial_velocity_random = 1.0
+orbit_velocity = 0.0
+orbit_velocity_random = 0.0
+linear_accel = -12.41
+scale_curve = SubResource( 3 )
+
+[node name="Laser" type="Node2D"]
+material = ExtResource( 7 )
+position = Vector2( 0, -100 )
+scale = Vector2( 2, 2 )
+script = ExtResource( 8 )
+
+[node name="LaserEffect" type="Sprite" parent="."]
+visible = false
+texture = ExtResource( 2 )
+offset = Vector2( 0, 2048 )
+region_enabled = true
+region_rect = Rect2( 0, 1017.79, 32, 4096 )
+
+[node name="LaserPreEffect" type="Particles2D" parent="."]
+visible = false
+use_parent_material = true
+z_index = 1
+emitting = false
+amount = 2000
+lifetime = 4.0
+randomness = 1.0
+visibility_rect = Rect2( -100, 0, 200, 4096 )
+process_material = SubResource( 1 )
+texture = ExtResource( 4 )
+
+[node name="LaserPostEffect" type="Particles2D" parent="."]
+use_parent_material = true
+position = Vector2( 0, 2048 )
+z_index = 1
+emitting = false
+amount = 2000
+lifetime = 2.0
+one_shot = true
+explosiveness = 1.0
+randomness = 1.0
+visibility_rect = Rect2( -16, -2048, 32, 4096 )
+process_material = SubResource( 4 )
+texture = ExtResource( 4 )
+
+[node name="Audio" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 6 )
+
+[node name="PreAudio" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 3 )
+
+[node name="PostAudio" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 5 )
+
+[node name="Camera2D" type="Camera2D" parent="."]
+current = true
